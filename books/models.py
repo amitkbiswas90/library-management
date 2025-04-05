@@ -29,6 +29,11 @@ class Book(models.Model):
     isbn = models.CharField(max_length=15, unique=True)
     category = models.CharField(max_length=3, choices=CATEGORY_CHOICES)
 
+    @property
+    def availability(self):
+        """Returns True if the book is available (not currently borrowed)"""
+        return not self.borrow_records.filter(return_date__isnull=True).exists()
+
     def __str__(self):
         return self.title
 

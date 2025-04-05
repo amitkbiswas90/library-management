@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from books.models import Author, Book, Member, Borrow
 from user.models import User
+from user.serializer import CustomUserCreateSerializer
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,10 +9,11 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'biography', 'birth_date']
 
 class BookSerializer(serializers.ModelSerializer):
+    availability = serializers.BooleanField(read_only=True)
+    
     class Meta:
         model = Book
         fields = ['id', 'title', 'author', 'isbn', 'category', 'availability']
-
 
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,9 +21,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = ['first_name', 'last_name','email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
-
 class MemberSerializer(serializers.ModelSerializer):
-    user = UserCreateSerializer()
+    user = CustomUserCreateSerializer()
     current_books = serializers.PrimaryKeyRelatedField(
         many=True, 
         read_only=True
